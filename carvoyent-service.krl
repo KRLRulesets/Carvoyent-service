@@ -1,4 +1,4 @@
-ruleset carvoyent-service {
+ruleset carvoyent_service {
 
   meta {
     name "Carvoyent service"
