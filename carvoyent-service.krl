@@ -25,8 +25,8 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
 
     get_vehicle_data = function() {
       http:get(carvoyent_url(my_vehicle_id),
-               {"credentials":  {"username": API_key
-	               		 "password": carvoyent_secret
+               {"credentials":  {"username": API_key,
+	               		 "password": carvoyent_secret,
 		       		 "realm": "/",
                        		 "netloc": "dash.carvoyent.com"
                       		}
