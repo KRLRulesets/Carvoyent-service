@@ -54,7 +54,7 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
       mileage = vehicle_data{'mileage'};
       name = vehicle_data{'name'};
       timestamp = vehicle_data{'now'};
-      lastRunningTimestamp = time:strftime(time:new(vehicle_data{'lastRunningTimestamp'}), "%A %d %b %Y");
+      lastRunningTimestamp = time:strftime(vehicle_data{'lastRunningTimestamp'}, "%A %d %b %Y");
       status = vehicle_data{'status'};
       lat = vehicle_data{'latitude'};
       long = vehicle_data{'longitude'};
