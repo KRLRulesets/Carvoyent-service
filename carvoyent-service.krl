@@ -61,7 +61,6 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
 
       my_html = <<
 <div style="margin: 0px 0px 20px 20px">
-Name:  #{name} <br/>
 Mileage:  #{mileage}<br/>
 Status: #{status} at #{lastRunningTimestamp}<br/>
 <p style="margin-top:10px"><iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=#{lat},#{long}&amp;aq=&amp;sll=#{lat-1},#{long-.4}&amp;sspn=10.363221,9.788818&amp;ie=UTF8&amp;t=m&amp;z=14&amp;ll=#{lat},#{long}&amp;output=embed"></iframe><br/><small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q=#{lat},#{long}&amp;aq=&amp;sll=#{lat-1},#{long-0.4}&amp;sspn=10.363221,9.788818&amp;ie=UTF8&amp;t=m&amp;z=14&amp;ll=#{lat},#{long}" target="_blank" style="color:#0000FF;text-align:left">View Larger Map</a></small></p>
@@ -70,7 +69,7 @@ Last check: #{timestamp}
 >>;
     }
     {
-      CloudRain:createLoadPanel("Carvoyent Test", {}, my_html);
+      CloudRain:createLoadPanel("Vehicle Data for #{name}", {}, my_html);
     }
   }
 
