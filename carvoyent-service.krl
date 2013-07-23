@@ -32,7 +32,9 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
 		       		 "realm": "Carvoyant API",
                        		 "netloc": "dash.carvoyent.com"
                       		}
-		});
+		},
+		{"params":{}}
+	       );
                
     }
     
