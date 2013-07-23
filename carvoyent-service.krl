@@ -29,8 +29,6 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
       http:get(carvoyent_url(my_vehicle_id),
                {"credentials":  {"username": API_key,
 	               		 "password": carvoyent_secret,
-		       		  // "realm": "Fake Realm",
-                       		  // "netloc": "httpbin.org:80"
 				 "realm": "Carvoyant API",
                       		 "netloc": "dash.carvoyant.com:443"
                       		},
@@ -48,11 +46,14 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
     pre {
 
       vinfo = get_vehicle_data().pick("$.content").decode();
+      running = vinfo.pick("$..running") => "Running" | "Off";
 
       my_html = <<
 <div style="margin: 0px 0px 20px 20px">
 Name: #{vinfo.pick("$..name")}<br/>
 Mileage: #{vinfo.pick("$..mileage")}<br/>
+Running: #{running} at ${vinfo.pick("$..lastRunningTimestamp")}<br/>
+
 </div>
 >>;
     }
