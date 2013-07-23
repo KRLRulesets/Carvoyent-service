@@ -1,13 +1,14 @@
 ruleset carvoyent_service {
 
   meta {
-    name "Carvoyent service"
+    name "Carvoyent Service"
     description <<
 Uses Carvoyent API to retrieve and store data about my vehicle at regular intervals
     >>
     author "Phil Windley"
     logging on
 
+    use module a169x676 alias pds
     use module a169x701 alias CloudRain
 
   }
@@ -23,7 +24,7 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
      // my_vehicle_id = "C201200099";
 
     carvoyent_url = function(vehicle_id) {
-      api_base_url = "https://dash.carvoyant.com/api/"+"/vehicle/";
+      api_base_url = "https://dash.carvoyant.com/api"+"/vehicle/";
       api_base_url + vehicle_id;      
     }
 
