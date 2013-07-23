@@ -52,7 +52,7 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
 <div style="margin: 0px 0px 20px 20px">
 Name: #{vinfo.pick("$..name")}<br/>
 Mileage: #{vinfo.pick("$..mileage")}<br/>
-Running: #{running} at ${vinfo.pick("$..lastRunningTimestamp")}<br/>
+Running: #{running} at #{vinfo.pick("$..lastRunningTimestamp")}<br/>
 
 </div>
 >>;
