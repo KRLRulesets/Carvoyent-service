@@ -19,10 +19,6 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
       pds:get_setting_data_value(meta:rid(), name);
     };
 
-     // API_key = "04b4df2e-04f3-4c11-b0be-796a05896ae1";
-     // carvoyent_secret = "13319e3b-c2be-4d24-aee5-9b2b9e6af6e7";
-     // my_vehicle_id = "C201200099";
-
     carvoyent_url = function(vehicle_id) {
       api_base_url = "https://dash.carvoyant.com/api"+"/vehicle/";
       api_base_url + vehicle_id;      
@@ -58,7 +54,7 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
 Name: #{vinfo.pick("$..name")}<br/>
 Mileage: #{vinfo.pick("$..mileage")}<br/>
 Status: #{running} at #{vinfo.pick("$..lastRunningTimestamp")}<br/>
-<p><iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=#{lat},#{long}&amp;aq=&amp;sll=#{lat-1},#{long-.4}&amp;sspn=10.363221,9.788818&amp;ie=UTF8&amp;t=m&amp;z=14&amp;ll=#{lat},#{long}&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q=#{lat},#{long}&amp;aq=&amp;sll=#{lat-1},#{long-0.4}&amp;sspn=10.363221,9.788818&amp;ie=UTF8&amp;t=m&amp;z=14&amp;ll=#{lat},#{long}" style="color:#0000FF;text-align:left">View Larger Map</a></small></p>
+<p><iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=#{lat},#{long}&amp;aq=&amp;sll=#{lat-1},#{long-.4}&amp;sspn=10.363221,9.788818&amp;ie=UTF8&amp;t=m&amp;z=14&amp;ll=#{lat},#{long}&amp;output=embed"></iframe><br/><small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q=#{lat},#{long}&amp;aq=&amp;sll=#{lat-1},#{long-0.4}&amp;sspn=10.363221,9.788818&amp;ie=UTF8&amp;t=m&amp;z=14&amp;ll=#{lat},#{long}" target="_blank" style="color:#0000FF;text-align:left">View Larger Map</a></small></p>
 </div>
 >>;
     }
@@ -67,6 +63,36 @@ Status: #{running} at #{vinfo.pick("$..lastRunningTimestamp")}<br/>
     }
   }
 
+  // --------------------------------------- scheduling --------------------------------------------
+  rule set_schedule {
+    select when web sessionLoaded
+    noop();
+    always {
+      schedule explicit event check_vehicle repeat "0-59/5 * * * *" // every 5 minutes
+    }
+  }
+
+ 
+ rule check_vehicle {
+   select when explicit check_vehicle
+    pre {
+
+      vinfo = get_vehicle_data().pick("$.content").decode();
+   }
+   always {
+     raise pds event new_map_available with
+          namespace = get_config_value("vehicle_id") and
+          mapvalues = {
+            "mileage" : vinfo.pick("$..mileage"),
+            "name": vinfo.pick("$..name"),
+	    "status" : vinfo.pick("$..running") => "Running" | "Off",
+	    "latitude" :  vinfo.pick("$..latitude"),
+            "longitude" : vinfo.pick("$..longitude"),
+            "timestamp" : vinfo.pick("$..lastRunningTimestamp"),
+            "now" : time:now()
+          }
+   }
+ }
 
   // ----------------------------------- configuration setup ---------------------------------------
   rule load_app_config_settings {
@@ -90,9 +116,9 @@ Status: #{running} at #{vinfo.pick("$..lastRunningTimestamp")}<br/>
         }
       ];
       data = {
-	"api_key" : "",
-	"api_secret" : "",
-	"vehicle_id" : ""
+	"api_key" : "none",
+	"api_secret" : "none",
+	"vehicle_id" : "none"
       };
 
     }
