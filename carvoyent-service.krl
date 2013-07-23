@@ -30,7 +30,7 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
                {"credentials":  {"username": API_key,
 	               		 "password": carvoyent_secret,
 		       		 "realm": "Carvoyant API",
-                       		 "netloc": "dash.carvoyent.com"
+                       		 "netloc": "dash.carvoyent.com:80"
                       		}
 		},
 		{"params":{}}
