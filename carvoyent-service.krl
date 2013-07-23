@@ -14,21 +14,23 @@ Uses Carvoyent API to retrieve and store data about my vehicle at regular interv
 
   global {
 
-    API_key = "04b4df2e-04f3-4c11-b0be-796a05896ae1";
-    carvoyent_secret = "13319e3b-c2be-4d24-aee5-9b2b9e6af6e7";
-    my_vehicle_id = "C201200099";
+    get_config_value = function (name) {
+      pds:get_setting_data_value(meta:rid(), name);
+    };
+
+     // API_key = "04b4df2e-04f3-4c11-b0be-796a05896ae1";
+     // carvoyent_secret = "13319e3b-c2be-4d24-aee5-9b2b9e6af6e7";
+     // my_vehicle_id = "C201200099";
 
     carvoyent_url = function(vehicle_id) {
-       // api_base_url = "http://httpbin.org/basic-auth/user/passwd";
-       // api_base_url
-      api_base_url = "https://dash.carvoyant.com/api/vehicle/";
+      api_base_url = "https://dash.carvoyant.com/api/"+"/vehicle/";
       api_base_url + vehicle_id;      
     }
 
     get_vehicle_data = function() {
-      http:get(carvoyent_url(my_vehicle_id),
-               {"credentials":  {"username": API_key,
-	               		 "password": carvoyent_secret,
+      http:get(carvoyent_url(get_config_value("vehicle_id")),
+               {"credentials":  {"username": get_config_value("api_key"),
+	               		 "password": get_config_value("api_secret"),
 				 "realm": "Carvoyant API",
                       		 "netloc": "dash.carvoyant.com:443"
                       		},
@@ -63,5 +65,45 @@ Status: #{running} at #{vinfo.pick("$..lastRunningTimestamp")}<br/>
       CloudRain:createLoadPanel("Carvoyent Test", {}, my_html);
     }
   }
+
+
+  // ----------------------------------- configuration setup ---------------------------------------
+  rule load_app_config_settings {
+    select when web sessionLoaded
+    pre {
+      schema = [
+        {
+          "name"     : "api_key",
+          "label"    : "Carvoyant API Key",
+          "dtype"    : "text"
+        },
+        {
+          "name"     : "api_secret",
+          "label"    : "Security token",
+          "dtype"    : "text"
+        },
+        {
+          "name"     : "vehicle_id",
+          "label"    : "Device ID for vehicle",
+          "dtype"    : "text"
+        }
+      ];
+      data = {
+	"api_key" : "",
+	"api_secret" : "",
+	"vehicle_id" : ""
+      };
+
+    }
+    always {
+      raise pds event new_settings_schema
+        with setName   = meta:rulesetName()
+        and  setRID    = meta:rid()
+        and  setSchema = schema
+        and  setData   = data
+        and  _api = "sky";
+    }
+  }
+
  
 }
