@@ -95,7 +95,7 @@ Last check: #{timestamp}
      raise pds event new_map_available with
           namespace = get_config_value("vehicle_id") and
           mapvalues = {
-            "mileage" : 
+            "mileage" : milage,
             "name": name,
 	    "status" : vinfo.pick("$..running") => "Running" | "Off",
 	    "latitude" :  vinfo.pick("$..latitude"),
