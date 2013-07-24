@@ -102,7 +102,7 @@ Last check: #{timestamp}
             "longitude" : vinfo.pick("$..longitude"),
             "lastRunningTimestamp" : vinfo.pick("$..lastRunningTimestamp"),
             "now" : time:now()
-          }
+          };
       raise notification event status
           with application = "Carvoyent Vehicle Data"
            and subject = "Daily Report on #{name}"
