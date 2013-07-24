@@ -1,9 +1,9 @@
 ruleset carvoyent_service {
 
   meta {
-    name "Carvoyent Service"
+    name "Carvoyant Service"
     description <<
-Uses Carvoyent API to retrieve and store data about my vehicle at regular intervals
+Uses Carvoyant API to retrieve and store data about my vehicle at regular intervals
     >>
     author "Phil Windley"
     logging on
@@ -78,7 +78,7 @@ Last check: #{timestamp}
     select when web sessionLoaded
     noop();
     always {
-      schedule explicit event check_vehicle repeat "0-59/5 * * * *" // every 5 minutes
+      schedule explicit event check_vehicle repeat "0-23/6 * * * *" // every six hours
     }
   }
 
@@ -88,19 +88,26 @@ Last check: #{timestamp}
     pre {
 
       vinfo = get_vehicle_data().pick("$.content").decode();
+      name = vinfo.pick("$..name");
+      mileage = vinfo.pick("$..mileage");
    }
    always {
      raise pds event new_map_available with
           namespace = get_config_value("vehicle_id") and
           mapvalues = {
-            "mileage" : vinfo.pick("$..mileage"),
-            "name": vinfo.pick("$..name"),
+            "mileage" : 
+            "name": name,
 	    "status" : vinfo.pick("$..running") => "Running" | "Off",
 	    "latitude" :  vinfo.pick("$..latitude"),
             "longitude" : vinfo.pick("$..longitude"),
             "lastRunningTimestamp" : vinfo.pick("$..lastRunningTimestamp"),
             "now" : time:now()
           }
+      raise notification event status
+          with application = "Carvoyent Vehicle Data"
+           and subject = "Daily Report on #{name}"
+           and description = "A new vehicle status report is available. Current mileage is #{mileage} miles."
+           and priority = 1;
    }
  }
 
