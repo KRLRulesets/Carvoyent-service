@@ -78,9 +78,10 @@ Version: 1
   rule set_schedule {
     select when web sessionLoaded
     noop();
-    always {
-      schedule explicit event check_vehicle repeat "0-23/6 * * * *" // every six hours
-    }
+    // doing this wrong. 
+     // always {
+     //   schedule explicit event check_vehicle repeat "0-59/5 * * * *" // every 5 minutes
+     // }
   }
 
  
@@ -104,13 +105,31 @@ Version: 1
             "lastRunningTimestamp" : vinfo.pick("$..lastRunningTimestamp"),
             "now" : time:now()
           };
+   }
+ }
+
+  rule create_report {
+    select when pds new_data_available
+    pre {
+      vehicle_data = pds:get_items(get_config_value("vehicle_id"));
+
+      mileage = vehicle_data{'mileage'};
+      name = vehicle_data{'name'};
+      timestamp = vehicle_data{'now'};
+      lastRunningTimestamp = vehicle_data{'lastRunningTimestamp'};
+      status = vehicle_data{'status'};
+      lat = vehicle_data{'latitude'};
+      long = vehicle_data{'longitude'};
+    }
+    fired {
       raise notification event status
           with application = "Carvoyent Vehicle Data"
            and subject = "Daily Report on #{name}"
            and description = "A new vehicle status report is available. Current mileage is #{mileage} miles."
            and priority = 1;
-   }
- }
+    }
+
+  }
 
   // ----------------------------------- configuration setup ---------------------------------------
   rule load_app_config_settings {
